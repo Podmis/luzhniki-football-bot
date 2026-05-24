@@ -1,9 +1,29 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
+    <meta name="robots" content="noindex,nofollow" />
+    <script src="https://telegram.org/js/telegram-web-app.js?2"></script>
 </head>
+
 <body>
-Test!
+
+    <script>
+        // Ensure the script is initialized
+        const webApp = window.Telegram.WebApp;
+
+        function sendMessageToBot() {
+            const data = JSON.stringify({
+                message: "Hello bot!",
+                status: "success"
+            });
+
+            // Sends data to the bot and closes the Mini App automatically
+            webApp.sendData(data);
+        }        
+    </script>
+
 </body>
+
 </html>
