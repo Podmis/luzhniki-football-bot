@@ -10,18 +10,11 @@
 <body>
 
     <script>
-        // Ensure the script is initialized
-        const webApp = window.Telegram.WebApp;
-
-        function sendMessageToBot() {
-            const data = JSON.stringify({
-                message: "Hello bot!",
-                status: "success"
-            });
-
-            // Sends data to the bot and closes the Mini App automatically
-            webApp.sendData(data);
-        }        
+        // Инициализация WebApp
+        const tg = window.Telegram.WebApp;
+        // Отправка строки (объекта JSON) боту
+        const messageData = { text: "Привет от бота!" };
+        tg.sendData(JSON.stringify(messageData));
     </script>
 
 </body>
