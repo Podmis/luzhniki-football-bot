@@ -16,15 +16,12 @@
     </div>
 
     <script>
-        // const tg = window.Telegram.WebApp;
-        // alert("Hello bot!");
-        // const messageData = { text: "Привет от бота!" };
-        // tg.sendData(JSON.stringify(messageData));
-
         if (window.Telegram && Telegram.WebApp) {
             const tg = Telegram.WebApp;
             tg.ready();
-            tg.sendData("Hello bot2");
+            alert("Hello from bot v3!");
+            const messageData = { text: "Hello from bot!" };
+            tg.sendData(JSON.stringify(messageData));
             setTimeout(() => tg.close(), 1500);
         }
     </script>
