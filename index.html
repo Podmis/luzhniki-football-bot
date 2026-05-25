@@ -21,15 +21,11 @@
         // const messageData = { text: "Привет от бота!" };
         // tg.sendData(JSON.stringify(messageData));
 
-        // Проверяем, инициализировался ли объект Telegram.WebApp
         if (window.Telegram && Telegram.WebApp) {
             const tg = Telegram.WebApp;
-            // tg.ready();
-            alert("Hello bot!");
-            // tg.sendData("test");
-            // Показываем карточку 1.5 секунды, затем закрываем
+            tg.ready();
+            tg.sendData("Hello bot");
             setTimeout(() => tg.close(), 1500);
-        } else {
         }
     </script>
 
