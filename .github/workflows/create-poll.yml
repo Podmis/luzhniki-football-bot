@@ -7,10 +7,13 @@ jobs:
     steps:
       - run: |
           curl -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendPoll" \
-            -d "chat_id=$CHAT_ID" \
-            -d "question=Кто идет в Лужники в субботу?" \
-            -d "options=['✅ Пойду','❌ Не смогу','🤔 Еще думаю']" \
-            -d "is_anonymous=false"
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "'"$CHAT_ID"'",
+              "question": "Кто идет в Лужники в субботу?",
+              "options": ["✅ Пойду", "❌ Не смогу", "🤔 Еще думаю"],
+              "is_anonymous": false
+            }'
         env:
           BOT_TOKEN: ${{ secrets.Bot_Token }}
           CHAT_ID: ${{ secrets.Chat_Id }}
