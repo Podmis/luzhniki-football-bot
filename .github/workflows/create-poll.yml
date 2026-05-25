@@ -2,6 +2,9 @@ name: Create Poll
 on:
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   create-poll:
     runs-on: ubuntu-latest
@@ -9,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
       - run: node -e "require('./luzhniki-football-bot.js').Create_Poll()"
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
