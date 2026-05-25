@@ -1,4 +1,4 @@
-name: Create Poll
+name: Create poll
 on:
   workflow_dispatch:
 
