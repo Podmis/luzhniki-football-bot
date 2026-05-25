@@ -16,5 +16,5 @@ jobs:
       - name: Run CreatePoll
         run: node -e "require('./luzhniki-football-bot.js').CreatePoll()"
         env:
-          Bot_Token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          Chat_Id: ${{ secrets.CHAT_ID }}
+          Bot_Token: ${{ secrets.Bot_Token }}
+          Chat_Id: ${{ secrets.Chat_Id }}
