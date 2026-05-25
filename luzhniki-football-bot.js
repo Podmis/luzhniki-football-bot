@@ -1,5 +1,4 @@
-// sendMessage.js
-async function sendTelegramMessage() {
+async function CreatePoll() {
     const BOT_TOKEN = process.env.Bot_Token;
     const CHAT_ID = process.env.Chat_Id;
 
@@ -14,4 +13,4 @@ async function sendTelegramMessage() {
     });
 }
 
-sendTelegramMessage();
+CreatePoll();
