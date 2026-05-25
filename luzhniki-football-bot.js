@@ -11,6 +11,5 @@ async function CreatePoll() {
             text: 'Hello from bot'
         })
     });
-}
-
-CreatePoll();
+};
+module.exports = { CreatePoll };
