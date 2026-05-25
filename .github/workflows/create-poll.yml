@@ -13,6 +13,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: node -e "require('./luzhniki-football-bot.js').Create_Poll()"
+      - run: node -e "require('./luzhniki-football-bot.js').CreatePoll()"
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
