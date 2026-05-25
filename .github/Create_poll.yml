@@ -1,4 +1,4 @@
-name: Send Telegram Message
+name: Create_poll
 
 on:
   workflow_dispatch:
