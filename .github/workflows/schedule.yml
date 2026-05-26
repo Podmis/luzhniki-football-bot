@@ -2,8 +2,12 @@ name: Schedule create-poll
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
-
+    - cron: "0/5 * * * *"
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  
 jobs:
   main:
     uses: ./.github/workflows/create-poll.yml
