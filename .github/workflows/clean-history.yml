@@ -1,0 +1,22 @@
+name: Clean old workflow runs
+
+on:
+  schedule:
+    # Запуск каждый день в 00:00 UTC (3:00 по Москве)
+    - cron: '0 0 * * *'
+  # Добавляем возможность запуска вручную
+  workflow_dispatch:
+
+jobs:
+  clean-runs:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write  # Это разрешение нужно для удаления записей
+    
+    steps:
+      - name: Delete old workflow runs
+        uses: iamazeem/delete-workflow-runs-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Оставляем только записи младше 3 дней (все старше будут удалены)
+          keep: 3
