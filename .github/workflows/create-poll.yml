@@ -1,20 +1,14 @@
 name: Create poll
 on:
-  workflow_dispatch: # Ручной запуск (кнопкой в интерфейсе GitHub)
+  workflow_dispatch:
   schedule:
-    # Каждое воскресенье в 10:00 по московскому времени (UTC+3)
-    # Cron: минуты часы дни месяцы дни_недели
-    # 0    7    *   *      0
-    #- cron: "0 7 * * 0" # 7 часов UTC = 10 часов Москва (UTC+3)
-    - cron: "0 * * * *" # Каждый час
+    - cron: "0 * * * *"
 
 jobs:
   poll:
     runs-on: ubuntu-latest
     steps:
-      # Получаем текущую дату по Москве в формате ДД.ММ
       - run: echo "DATE=$(TZ='Europe/Moscow' date +'%d.%m')" >> $GITHUB_ENV
-
       - name: Create poll
         run: |
           curl -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendPoll" \
@@ -34,4 +28,3 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.Bot_Token }}
           CHAT_ID: ${{ secrets.Chat_Id }}
-
