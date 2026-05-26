@@ -1,4 +1,4 @@
-name: Create poll
+name: Schedule create-poll
 
 on:
   schedule:
