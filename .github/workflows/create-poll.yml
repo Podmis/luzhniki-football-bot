@@ -5,13 +5,21 @@ jobs:
   poll:
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - run: echo "DATE=$(TZ='Europe/Moscow' date +'%d.%m')" >> $GITHUB_ENV
+      - name: Create poll
+        run: |
           curl -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendPoll" \
             -H "Content-Type: application/json" \
             -d '{
               "chat_id": "'"$CHAT_ID"'",
-              "question": "Сбор на 25.05",
-              "options": ["Запасной пропускаю ❌", "Играю 🟢", "Играю 🟠", "Приглашенная звезда ⭐", "Основной пропускаю ❌", "Запасной играю"],
+              "question": "Сбор на '"$DATE"'",
+              "options": [
+          "Запасной пропускаю ❌",
+          "Играю 🟢",
+          "Играю 🟠",
+          "Приглашенная звезда ⭐",
+          "Основной пропускаю ❌",
+          "Запасной играю"],
               "is_anonymous": false
             }'
         env:
