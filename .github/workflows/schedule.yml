@@ -1,0 +1,9 @@
+name: Create poll
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+
+jobs:
+  main:
+    uses: ./.github/workflows/create-poll.yml
