@@ -1,3 +1,4 @@
+# (dev) Отправляем опрос в футбольный чат
 name: Create-poll
 on:
   workflow_dispatch:
@@ -15,7 +16,7 @@ jobs:
           RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendPoll" \
             -H "Content-Type: application/json" \
             -d '{
-              "chat_id": "'"$CHAT_ID"'",
+              "chat_id": "'"$DEV_CHAT_ID"'",
               "question": "Сбор на '"$DATE"'",
               "options": [
                 "Запасной пропускаю ❌",
@@ -37,7 +38,7 @@ jobs:
           curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/pinChatMessage" \
             -H "Content-Type: application/json" \
             -d '{
-              "chat_id": "'"$CHAT_ID"'",
+              "chat_id": "'"$DEV_CHAT_ID"'",
               "message_id": '$MESSAGE_ID',
               "disable_notification": false
             }'
@@ -45,4 +46,4 @@ jobs:
           echo "✅ Poll created and pinned with notification"
         env:
           BOT_TOKEN: ${{ secrets.Bot_Token }}
-          CHAT_ID: ${{ secrets.Chat_Id }}
+          DEV_CHAT_ID: ${{ secrets.dev_Chat_Id }}
