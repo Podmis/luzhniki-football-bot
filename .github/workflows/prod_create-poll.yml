@@ -1,0 +1,49 @@
+# (prod) Отправляем опрос в футбольный чат
+name: Create-poll
+on:
+  workflow_dispatch:
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set date
+        run: echo "DATE=$(TZ='Europe/Moscow' date +'%d.%m')" >> $GITHUB_ENV
+
+      - name: Create and pin poll
+        run: |
+          # Отправляем опрос и сохраняем ответ
+          RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendPoll" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "'"$PROD_CHAT_ID"'",
+              "question": "Сбор на '"$DATE"'",
+              "options": [
+                "Запасной пропускаю ❌",
+                "Играю 🟢",
+                "Играю 🟠",
+                "Приглашенная звезда ⭐",
+                "Основной пропускаю ❌",
+                "Запасной играю"
+              ],
+              "is_anonymous": false
+            }')
+
+          # Извлекаем message_id через grep и sed (без jq)
+          MESSAGE_ID=$(echo "$RESPONSE" | grep -o '"message_id":[0-9]*' | head -1 | grep -o '[0-9]*')
+
+          echo "Message ID: $MESSAGE_ID"
+
+          # Закрепляем опрос
+          curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/pinChatMessage" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "'"$PROD_CHAT_ID"'",
+              "message_id": '$MESSAGE_ID',
+              "disable_notification": false
+            }'
+
+          echo "✅ Poll created and pinned with notification"
+        env:
+          BOT_TOKEN: ${{ secrets.Bot_Token }}
+          PROD_CHAT_ID: ${{ secrets.prod_Chat_Id }}
