@@ -1,5 +1,5 @@
 # (prod) Отправляем опрос в футбольный чат
-name: Create-poll
+name: prod_Create-poll
 on:
   workflow_dispatch:
 
