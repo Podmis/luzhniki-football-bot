@@ -9,9 +9,24 @@ jobs:
     steps:
       - name: Set date
         run: |
-          Day0=86400; # Один день
+          Day0=86400 # Один день
+          # Завтрашний день
           TOMORROW_DAY=$(($(TZ='Europe/Moscow' date +%s) + $Day0))
-          echo "DATE=$(TZ='Europe/Moscow' date -d "@$TOMORROW_DAY" +'%d.%m')" >> $GITHUB_ENV
+          DATE=$(TZ='Europe/Moscow' date -d "@$TOMORROW_DAY" +'%d.%m')
+          echo "DATE=$DATE" >> $GITHUB_ENV          
+
+          # Дни недели (1-7, где 1 = понедельник)
+          WEEKDAY_NUM=$(TZ='Europe/Moscow' date -d "@$TOMORROW_DAY" +'%u')
+          case $WEEKDAY_NUM in
+            1) WEEKDAY="пн" ;;
+            2) WEEKDAY="вт" ;;
+            3) WEEKDAY="ср" ;;
+            4) WEEKDAY="чт" ;;
+            5) WEEKDAY="пт" ;;
+            6) WEEKDAY="сб" ;;
+            7) WEEKDAY="вс" ;;
+          esac
+          echo "WEEKDAY=$WEEKDAY" >> $GITHUB_ENV
 
       - name: Create and pin poll
         run: |
@@ -20,7 +35,7 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{
               "chat_id": "'"$DEV_CHAT_ID"'",
-              "question": "Сбор на '"$DATE"'",
+              "question": "Сбор на '"$DATE"' ('"$WEEKDAY"')",
               "options": [
                 "Запасной пропускаю ❌",
                 "Играю 🟢",
