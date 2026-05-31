@@ -1,5 +1,5 @@
 # (dev) Отправляем опрос в футбольный чат
-name: Create-poll
+name: dev_Create-poll
 on:
   workflow_dispatch:
 
