@@ -1,5 +1,5 @@
 # (dev) Отправляем опрос в футбольный чат
-name: dev_Create-poll
+name: Create-poll
 on:
   workflow_dispatch:
 
@@ -8,7 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set date
-        run: echo "DATE=$(TZ='Europe/Moscow' date +'%d.%m')" >> $GITHUB_ENV
+        run: |
+          Day0=86400; # Один день
+          TOMORROW_DAY=$(($(TZ='Europe/Moscow' date +%s) + $Day0))
+          echo "DATE=$(TZ='Europe/Moscow' date -d "@$TOMORROW_DAY" +'%d.%m')" >> $GITHUB_ENV
 
       - name: Create and pin poll
         run: |
