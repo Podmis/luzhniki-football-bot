@@ -37,12 +37,13 @@ jobs:
               "chat_id": "'"$DEV_CHAT_ID"'",
               "question": "Сбор на '"$DATE"' ('"$WEEKDAY"')",
               "options": [
-                "Запасной пропускаю ❌",
                 "Играю 🟢",
                 "Играю 🟠",
-                "Приглашенная звезда ⭐",
                 "Основной пропускаю ❌",
-                "Запасной играю"
+                "Основной замена 🔄", 
+                "Запасной играю ⚽",
+                "Запасной пропускаю ❌",
+                "Приглашенная звезда ⭐"
               ],
               "is_anonymous": false
             }')
@@ -58,7 +59,8 @@ jobs:
             -d '{
               "chat_id": "'"$DEV_CHAT_ID"'",
               "message_id": '$MESSAGE_ID',
-              "disable_notification": false
+              "disable_notification": false,
+              "allows_multiple_answers": true
             }'
 
           echo "✅ Poll created and pinned with notification"
