@@ -13,7 +13,8 @@ jobs:
           # Завтрашний день
           TOMORROW_DAY=$(($(TZ='Europe/Moscow' date +%s) + $Day0))
           DATE=$(TZ='Europe/Moscow' date -d "@$TOMORROW_DAY" +'%d.%m')
-          echo "DATE=$DATE" >> $GITHUB_ENV          
+          echo "DATE=$DATE" >> $GITHUB_ENV
+          echo "TOMORROW_DAY=$TOMORROW_DAY" >> $GITHUB_ENV
 
           # Дни недели (1-7, где 1 = понедельник)
           WEEKDAY_NUM=$(TZ='Europe/Moscow' date -d "@$TOMORROW_DAY" +'%u')
@@ -28,28 +29,85 @@ jobs:
           esac
           echo "WEEKDAY=$WEEKDAY" >> $GITHUB_ENV
 
+      - name: Get weather
+        id: weather
+        continue-on-error: true
+        run: |
+          # Координаты Футбольная площадка № 28
+          LAT="55.724211"
+          LON="37.545187"
+
+          # Получаем TOMORROW_DAY из ENV и вычисляем TOMORROW_DATE
+          TOMORROW_DAY="${{ env.TOMORROW_DAY }}"
+          TOMORROW_DATE=$(TZ='Europe/Moscow' date -d "@$TOMORROW_DAY" +'%Y-%m-%d')
+
+          # Запрашиваем прогноз погоды
+          WEATHER_RESPONSE=$(curl -s --max-time 5 "https://api.open-meteo.com/v1/forecast?latitude=$LAT&longitude=$LON&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weathercode&timezone=Europe/Moscow&forecast_days=2" || echo "")
+
+          if [ -z "$WEATHER_RESPONSE" ]; then
+            echo "weather_status=failed" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Парсим погоду через Node.js
+          WEATHER=$(node -e "
+          const data = JSON.parse(process.argv[1]);
+          const targetTime = process.argv[2];
+
+          const times = data.hourly?.time;
+          if (!times) { console.log(''); process.exit(0); }
+
+          const idx = times.indexOf(targetTime);
+          if (idx === -1) { console.log(''); process.exit(0); }
+
+          const temp = data.hourly.temperature_2m[idx];
+          const humidity = data.hourly.relative_humidity_2m[idx];
+          const precip = data.hourly.precipitation_probability[idx];
+          const weatherCode = data.hourly.weathercode[idx];
+
+          const icons = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌧️',53:'🌧️',55:'🌧️',61:'🌦️',63:'🌧️',65:'🌧️',71:'🌨️',73:'❄️',75:'❄️',80:'☔',81:'☔',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
+          const icon = icons[weatherCode] || '❓';
+          const tempRounded = Math.round(temp);
+          const tempStr = tempRounded > 0 ? '+' + tempRounded + '°C' : (tempRounded < 0 ? tempRounded + '°C' : '0°C');
+          console.log(icon + ' ' + tempStr + ' 💧' + Math.round(humidity) + '% ☔' + Math.round(precip) + '%');
+          " "$WEATHER_RESPONSE" "${TOMORROW_DATE}T20:00")
+
+          if [ -n "$WEATHER" ]; then
+            echo "weather_status=ok" >> $GITHUB_OUTPUT
+            echo "weather=$WEATHER" >> $GITHUB_OUTPUT
+          else
+            echo "weather_status=failed" >> $GITHUB_OUTPUT
+          fi
+
       - name: Create and pin poll
         run: |
-          # Отправляем опрос и сохраняем ответ
+          if [ "${{ steps.weather.outputs.weather_status }}" = "ok" ]; then
+            WEATHER_TEXT="${{ steps.weather.outputs.weather }}"
+          else
+            WEATHER_TEXT="🌤️ NOT"
+          fi
+
+          # Отправляем опрос
           RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendPoll" \
             -H "Content-Type: application/json" \
             -d '{
               "chat_id": "'"$PROD_CHAT_ID"'",
-              "question": "Сбор на '"$DATE"' ('"$WEEKDAY"')",
+              "question": "Сбор на '"$DATE"' ('"$WEEKDAY"') | '"$WEATHER_TEXT"'",
               "options": [
-                "Запасной пропускаю ❌",
                 "Играю 🟢",
                 "Играю 🟠",
-                "Приглашенная звезда ⭐",
                 "Основной пропускаю ❌",
-                "Запасной играю"
+                "Основной замена 🔄", 
+                "Запасной играю ⚽",
+                "Запасной пропускаю ❌",
+                "Приглашенная звезда ⭐"
               ],
-              "is_anonymous": false
+              "is_anonymous": false,
+              "allows_multiple_answers": true
             }')
 
-          # Извлекаем message_id через grep и sed (без jq)
+          # Извлекаем message_id
           MESSAGE_ID=$(echo "$RESPONSE" | grep -o '"message_id":[0-9]*' | head -1 | grep -o '[0-9]*')
-
           echo "Message ID: $MESSAGE_ID"
 
           # Закрепляем опрос
@@ -61,7 +119,7 @@ jobs:
               "disable_notification": false
             }'
 
-          echo "✅ Poll created and pinned with notification"
+          echo "✅ Poll created with weather status: ${{ steps.weather.outputs.weather_status }}"
         env:
           BOT_TOKEN: ${{ secrets.Bot_Token }}
           PROD_CHAT_ID: ${{ secrets.prod_Chat_Id }}
