@@ -45,7 +45,8 @@ jobs:
                 "Запасной пропускаю ❌",
                 "Приглашенная звезда ⭐"
               ],
-              "is_anonymous": false
+              "is_anonymous": false,
+              "allows_multiple_answers": true
             }')
 
           # Извлекаем message_id через grep и sed (без jq)
