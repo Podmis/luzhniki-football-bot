@@ -1,4 +1,4 @@
-# (dev) Отправляем опрос в футбольный чат
+# (DEV) Отправляем опрос в футбольный чат
 name: dev_Create-poll
 on:
   workflow_dispatch:
@@ -118,8 +118,16 @@ jobs:
               "message_id": '$MESSAGE_ID',
               "disable_notification": false
             }'
-
           echo "✅ Poll created with weather status: ${{ steps.weather.outputs.weather_status }}"
+
+      - name: Send statistics image
+        run: |
+          curl -s -F "chat_id=$DEV_CHAT_ID" \
+            -F "photo=@.github/workflows/dev_png-stats_table.png" \
+            -F "caption=📊 Статистика участия" \
+            "https://api.telegram.org/bot$BOT_TOKEN/sendPhoto"
+          echo "✅ Statistics image sent"
+
         env:
           BOT_TOKEN: ${{ secrets.Bot_Token }}
           DEV_CHAT_ID: ${{ secrets.dev_Chat_Id }}
