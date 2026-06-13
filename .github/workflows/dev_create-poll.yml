@@ -7,6 +7,9 @@ jobs:
   poll:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set date
         run: |
           Day0=86400 # Один день
@@ -120,6 +123,17 @@ jobs:
             }'
 
           echo "✅ Poll created with weather status: ${{ steps.weather.outputs.weather_status }}"
+        env:
+          BOT_TOKEN: ${{ secrets.Bot_Token }}
+          DEV_CHAT_ID: ${{ secrets.dev_Chat_Id }}
+
+      - name: Send statistics image
+        run: |
+          curl -s -F "chat_id=$DEV_CHAT_ID" \
+            -F "photo=@.github/workflows/dev_png-stats_table.png" \
+            -F "caption=📊 Статистика участия" \
+            "https://api.telegram.org/bot$BOT_TOKEN/sendPhoto"
+          echo "✅ Statistics image sent"
         env:
           BOT_TOKEN: ${{ secrets.Bot_Token }}
           DEV_CHAT_ID: ${{ secrets.dev_Chat_Id }}
