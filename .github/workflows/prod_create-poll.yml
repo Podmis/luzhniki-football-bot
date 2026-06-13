@@ -1,4 +1,4 @@
-# (prod) Лужники - футбольное поле №28 // пн // 20:00
+# (PROD) Лужники - футбольное поле №28 // пн // 20:00
 name: prod_Create-poll
 on:
   workflow_dispatch:
@@ -127,7 +127,7 @@ jobs:
           BOT_TOKEN: ${{ secrets.Bot_Token }}
           PROD_CHAT_ID: ${{ secrets.prod_Chat_Id }}
 
-      - name: Send statistics
+      - name: Send statistics image
         run: |
           curl -s -F "chat_id=$PROD_CHAT_ID" \
             -F "photo=@.github/workflows/prod_statistics.png" \
