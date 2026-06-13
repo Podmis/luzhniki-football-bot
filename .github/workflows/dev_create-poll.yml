@@ -130,8 +130,8 @@ jobs:
       - name: Send statistics image
         run: |
           curl -s -F "chat_id=$DEV_CHAT_ID" \
-            -F "photo=@.github/workflows/dev_png-stats_table.png" \
-            -F "caption=📊 Статистика участия" \
+            -F "photo=@.github/workflows/dev_statistics.png" \
+            -F "caption=📊 Статистика команд" \
             "https://api.telegram.org/bot$BOT_TOKEN/sendPhoto"
           echo "✅ Statistics image sent"
         env:
