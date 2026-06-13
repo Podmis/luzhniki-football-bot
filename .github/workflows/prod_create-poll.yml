@@ -131,7 +131,7 @@ jobs:
         run: |
           curl -s -F "chat_id=$PROD_CHAT_ID" \
             -F "photo=@.github/workflows/prod_statistics.png" \
-            -F "caption=📊 Статистика команд" \
+            -F "caption=📊 Статистика команд 2026" \
             "https://api.telegram.org/bot$BOT_TOKEN/sendPhoto"
           echo "✅ Statistics image sent"
         env:
