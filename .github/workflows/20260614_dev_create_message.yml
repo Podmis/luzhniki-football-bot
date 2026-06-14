@@ -1,0 +1,22 @@
+# (DEV) Лужники - футбольное поле №28 // пн // 20:00
+name: dev_create-message
+on:
+  workflow_dispatch:
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Send statistics
+        run: |
+          curl -s -F "chat_id=$DEV_CHAT_ID" \
+            -F "photo=@.github/workflows/dev_statistics.png" \
+            -F "caption=📊 Статистика по всем игрокам за 2026 г." \
+            "https://api.telegram.org/bot$BOT_TOKEN/sendPhoto"
+          echo "✅ Statistics image sent"
+        env:
+          BOT_TOKEN: ${{ secrets.Bot_Token }}
+          DEV_CHAT_ID: ${{ secrets.dev_Chat_Id }}
